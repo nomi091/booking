@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:booking/Model/vehicleModel.dart';
 import 'package:booking/customwidgets.dart';
 import 'package:booking/DB/dbHandler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EditVehicle extends StatefulWidget {
   //EditVehicle({super.key});
@@ -26,12 +30,42 @@ class _EditVehicleState extends State<EditVehicle> {
     cont3.text = widget.v.color.toString();
   }
 
-  void updateRecords(BuildContext context) async {
+  Future<void> updateRecords(BuildContext context) async {
     int vid = int.parse(cont1.text);
     String make = cont2.text;
     String color = cont3.text;
-    VehicleModel vehicle = VehicleModel(vid: vid, make: make, color: color,);
-    DbHandler.instance.updateVehicleRecords(widget.vid, vehicle);
+
+    // Use image_picker to select an image
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // If an image is selected, get the file path
+      String imagePath = pickedFile.path;
+
+      // Create a unique filename for the image
+      String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+      // Get the app's document directory
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+
+      // Combine the directory path and image filename to get the full path
+      String imageFilePath = '${appDocDir.path}/$imageFileName.png';
+
+      // Move the selected image file to the app's document directory
+      File(pickedFile.path).copy(imageFilePath);
+
+      VehicleModel vehicle = VehicleModel(
+        vid: vid,
+        make: make,
+        color: color,
+        imagePath: imageFilePath, // Store the image path
+      );
+
+      // Save the vehicle model with the image path
+      DbHandler.instance.updateVehicleRecords(widget.vid, vehicle);
+    }
+
     Navigator.pop(context);
   }
 
