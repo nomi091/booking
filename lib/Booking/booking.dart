@@ -264,12 +264,12 @@ class _BookingPageState extends State<BookingPage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          _editBooking(context, booking);
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.edit),
+                      //   onPressed: () {
+                      //     _editBooking(context, booking);
+                      //   },
+                      // ),
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
